@@ -132,7 +132,7 @@
 }
 
 /* Set truck name */
-#var truck[name] {CanisLupus}
+#var truck[name] {Pavlov}
 #format {truck[lower]} {%l} {$truck[name]}
 #format {truck[first_cap]} {%n} {$truck[lower]}
 
@@ -197,7 +197,11 @@
 
 /* Aliases */
 #NOP No killtrig because I have ktrig!
-#alias corpsetrig {#nop}
+#alias corpsetrig {
+	wrap;
+	get coins;
+	truck take all;
+}
 
 #NOP Fire all nukes at current stepper mob or current enemy
 #alias ff {
