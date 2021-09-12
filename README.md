@@ -149,3 +149,15 @@ Map Mouse Functions
 * Single-click on Map room:  display `#map info` for the clicked room
 * Double-click on Map room:  move map to clicked room
 * Triple-click on Map room:  run to clicked room
+
+## Repo Fork
+
+This repo is a fork of https://github.com/Inix3K/TinTin , which is actively maintained. The intention of this repo is to extend that one and consume useful upstream changes without being limited by merge conflicts. To that end, changes to this repo should:
+
+1. leave existing files intact as much as possible
+	a. deleting files should be okay
+	b. minimally edit code and comment style
+	c. if an existing file warrants heavy modification, consider using a new file, removing references to the old version, and using aliases instead of renames.
+	d. make purely additive changes (i.e. comments added on separate lines from existing code)
+2. leave existing folders intact
+	a. new organization systems can be used with different top-level folders
