@@ -70,6 +70,7 @@
 	#if {$shp > 0 && $shp < 9} {dismiss};
 	#if {"$saf" == "No"} {support assault fire};
 	update_status
+	#line gag
 }
 
 #alias {update_status} {
