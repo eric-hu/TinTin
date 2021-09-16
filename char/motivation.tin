@@ -20,5 +20,9 @@ rtick
 
 #NOP Primary Guile File
 #read .tt/3k/guilds/juggernaut.tin
+/* Juggernaut variables */
+
+/* Light missile: Gnome suit */
+#var ammo_type 1
 
 #class {inix} {close}
