@@ -53,13 +53,13 @@
 }
 
 
+/* Equivalent to
+ 1. #path walk (proceed one room in botpath)
+ 2. check for players and _check_mob again if present
+ 3. check for mob to fight
+ 4. check for items and coins, take if present (and vacuum set to 1)
+*/
 #act {^You have exhausted the supply of iron ore.} {
-  /* Equivalent to
-   1. #path walk (proceed one room in botpath)
-   2. check for players and _check_mob again if present
-   3. check for mob to fight
-   4. check for items and coins, take if present (and vacuum set to 1)
-  */
   #var halt 0
   _check_mob
 }
