@@ -8,7 +8,6 @@
 #var {botpath} {
   n;spelunk;
   n;spelunk;
-  n;spelunk;
   w;spelunk;
   w;spelunk;
   w;spelunk;
@@ -40,23 +39,25 @@
   w;spelunk;
 }
 
-#act {You have found a deposit of iron ore!} { .. }
 
-#act {You have exhausted the supply of steel ore.} { .. }
-
-#act {It appears this part of the shaft has already been searched.} { .. }
-
-/* Equivalent to
+/* .. is equivalent to
  0. set halt to 0
  1. #path walk (proceed one room in botpath)
  2. check for players and _check_mob again if present
  3. check for mob to fight
  4. check for items and coins, take if present (and vacuum set to 1)
 */
-#act {You have exhausted the supply of iron ore.} { .. }
+#act {You have found a deposit of iron ore!} { .. }
+#act {You have found a deposit of steel ore!} { .. }
 
+#act {It appears this part of the shaft has already been searched.} { .. }
+
+#act {You have exhausted the supply of iron ore.} { .. }
 #act {You have exhausted the supply of steel ore.} { .. }
 
+#act { You have disturbed} {
+  #var halt 1;
+}
 #act {You should try to mine this instead.} {
   #var halt 1;
   mine;
