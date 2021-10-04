@@ -1,0 +1,77 @@
+#class {bot} {open}
+
+#var {no_loop} {0}
+#var {no_home} {0}
+#var {hardmode} {0}
+#var {vacuum} {1}
+
+#var {botpath} {
+  n;spelunk;
+  n;spelunk;
+  n;spelunk;
+  w;spelunk;
+  w;spelunk;
+  w;spelunk;
+  e;sw;spelunk;
+  ne;s;spelunk;
+  n;se;spelunk;
+  nw;nw;spelunk;
+  se;n;spelunk;
+  e;spelunk;
+  e;spelunk;
+  n;spelunk;
+  w;spelunk;
+  n;spelunk;
+  n;spelunk;
+  w;spelunk;
+  w;spelunk;
+  s;spelunk;
+  e;spelunk;
+  s;spelunk;
+  n;w;nw;spelunk;
+  s;spelunk;
+  s;spelunk;
+  s;spelunk;
+  s;spelunk;
+  s;spelunk;
+  w;spelunk;
+  w;spelunk;
+  ne;spelunk;
+  w;spelunk;
+}
+
+#act {^You have found a deposit of iron ore!} {
+  mine  
+}
+
+#act {^You have exhausted the supply of iron ore.} {
+  /* Equivalent to
+   1. #path walk (proceed one room in botpath)
+   2. check for players and _check_mob again if present
+   3. check for mob to fight
+   4. check for items and coins, take if present (and vacuum set to 1)
+  */
+  _check_mob
+}
+
+#act {^You should try to mine this instead.} {
+  mine
+}
+
+#act {^=M= {Queen's Elite Guardswoman|Black Patrol Guard|Black Patrol Leader|Wild Stag|Faerie Lizard|Baby Dragon|Rabid Wolf|Ragged Peasant|Sylvan Elf|Wyvern}} {
+	#switch {"%1"} {
+		#case {"Queen's Elite Guardswoman"}	{#var mobname guard};
+		#case {"Black Patrol Guard"}		{#var mobname guard};
+		#case {"Black Patrol Leader"}		{#var mobname guard};
+		#case {"Wild Stag"}			{#var mobname stag};
+		#case {"Faerie Lizard"}			{#var mobname lizard};
+		#case {"Baby Dragon"}			{#var mobname dragon};
+		#case {"Rabid Wolf"}			{#var mobname wolf};
+		#case {"Ragged Peasant"}		{#var mobname peasant};
+		#case {"Sylvan Elf"}			{#var mobname elf};
+		#case {"Wyvern"}			{#var mobname wyvern};
+	};
+	#if {($hardmode == 1 && "$mobname" == "guard") ^^ ("$mobname" != "guard")} {_check_mob}
+}
+
+#class {bot} {close}
