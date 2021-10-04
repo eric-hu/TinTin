@@ -18,8 +18,18 @@
 #act {Canislupus skips: a packet of hot sauce.} {get all;grab sauce}
 #act {You try to grab a packet of hot sauce, but it crinkles away from you.} {#nop}
 
-#var weapon axe
-#act {The melting cheese finally evaporates from %w.} {!wield $weapon}
-#act {The guacamole coating %w finally oozes off.} {!wear all}
+#act {Pavlov takes: a stale taco shell.} {get all;grab shell}
+#act {Pavlov takes: a handful of shredded lettuce.} {get all;grab lettuce}
+#act {Pavlov takes: a handful of diced tomatoes.} {get all;grab tomatoes}
+#act {Pavlov takes: a handful of grated cheese.} {get all;grab cheese}
+#act {Pavlov takes: a pile of ground meat.} {get all;grab meat}
+#act {Pavlov takes: a glop of sour cream.} {get all;grab cream}
+#act {Pavlov takes: a lump of pasty guacamole.} {get all;grab guac}
+#act {Pavlov takes: a packet of hot sauce.} {get all;grab sauce}
+
+
+#var weapon mace
+#act {The melting cheese finally evaporates from %w.} {wield $weapon}
+#act {The guacamole coating %w finally oozes off.} {wear all}
 
 #class {bot} {close}
