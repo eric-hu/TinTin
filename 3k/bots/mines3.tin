@@ -47,8 +47,14 @@
  3. check for mob to fight
  4. check for items and coins, take if present (and vacuum set to 1)
 */
-#act {You have found a deposit of iron ore!} { .. }
-#act {You have found a deposit of steel ore!} { .. }
+#act {You have found a deposit of iron ore!} { 
+  #var halt 1;
+  mine;
+ }
+#act {You have found a deposit of steel ore!} {
+  #var halt 1;
+  mine;
+ }
 
 #act {It appears this part of the shaft has already been searched.} { .. }
 
