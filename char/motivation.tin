@@ -25,4 +25,11 @@ rtick
 /* Light missile: Gnome suit */
 #var ammo_type 1
 
+
+/* Motivation specific scripts */
+
+#ALIAS rescuepups {#9 {tgm puppy;rescue puppy}}
+
+/* */
+#ALIAS prospectore {unstash2 50 %0 ore;#50 prospect;stash all}
 #class {inix} {close}
