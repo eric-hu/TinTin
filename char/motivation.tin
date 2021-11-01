@@ -25,7 +25,6 @@ rtick
 /* Light missile: Gnome suit */
 #var ammo_type 1
 
-
 /* Motivation specific scripts */
 
 #ALIAS rescuepups {#9 {tgm puppy;rescue puppy}}
@@ -33,7 +32,10 @@ rtick
 /* Enchanting / Mining */
 #ALIAS prospectore {unstash2 50 %0 ore;#50 prospect;stash all}
 
-/* */
+/* ROLM */
+#ACTION {Upon the Rod of Lordly Might, the scroll rune glows brightly again.} { update_chat %0; }
+
+/* Utility */
 #ALIAS redrawmobile {redraw chat off;redraw map off;redraw canvas off}
 #ALIAS redrawdesktop {redraw chat on;redraw map on;redraw canvas on}
 
