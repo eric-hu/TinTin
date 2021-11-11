@@ -33,10 +33,26 @@ rtick
 #ALIAS prospectore {unstash2 50 %0 ore;#50 prospect;stash all}
 
 /* ROLM */
-#ACTION {Upon the Rod of Lordly Might, the scroll rune glows brightly again.} { update_chat %0; }
+/*  Upon the DragonBlade, the scroll rune glows brightly again. */
+#ACTION {Upon the %*, the scroll rune glows brightly again.} { update_chat %0; }
 
 /* Utility */
 #ALIAS redrawmobile {redraw chat off;redraw map off;redraw canvas off}
 #ALIAS redrawdesktop {redraw chat on;redraw map on;redraw canvas on}
+
+
+/* Ring of Thunderbolts */
+#VAR {tb_ring_count} {2}
+#ALIAS {tbring} {smur ring $tb_ring_count;remove ring;wear ring;#23 frotzz;smu ring;wear ring;}
+
+/* Death Taco soda */
+
+#VAR {pop_count} {0}
+#ALIAS {smpop} {smuggle remove pop $pop_count;drink pop;smuggle pop;}
+
+#MATH energy_well_cooldown {30*60+1};
+#ALIAS ewellloop {(energy well;#ticker {energy_well} {(energy well} {$energy_well_cooldown}};
+
+#ALIAS hmbloop {hmblast mind;#ticker {hmblast} {hmblast mind} {3601}}
 
 #class {inix} {close}
