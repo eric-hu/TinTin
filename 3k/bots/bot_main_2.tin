@@ -1,0 +1,384 @@
+#CLASS {bot2} {open};
+
+/*
+DESIGN GOALS
+
+- send as few commands as possible
+  - no unnecessary commands, moves, kills, gets, etc
+- bot is minimally tripped up by human interaction
+  - "look" doesn't trip up bot
+
+- start simple
+  - walk before you run
+  - move-only first
+
+
+*/
+
+/* WIP Progress
+
+- runs through all rooms in botpath
+- works with level 3 and level 4 mine overrides
+- fixed: action.pre not firing in every room (Possibly fixed?)
+- fixed: "truck take all" sends when i'm not in the room, truck can't see and it says "it is too dark"
+- fixed: mines4 leaving scripts not cleaned up
+
+- TOFIX: wsewers runs through without any combat
+- TODO: items left behind
+  - works in single step mode, sounds like race condition
+
+- TOFIX: mines4 stops too late on some mineral patches (1-2 rooms too far)
+- TOFIX: on mob, sometimes stops a room too late
+- TOFIX: .move.post, .cleanup.post sent to mud after path finished
+- TOFIX: .cleanup called in corpse trig after bot finishes
+
+- TOFIX: counters in pre/post hooks uneven
+  - mines4: move.pre 30, cleanup.post 28. everything else 29
+  - wsea: DEBUG: {action.post}{123}{action.pre}{123}{cleanup.post}{123}{cleanup.pre}{123}{move.post│
+ }{122}{move.pre}{123}
+- TODO: (BIG) path array support
+
+(Idea: could support botpath as array or var by checking for botpath[1])
+(Idea: experiment with different classes to encapsulate each phase)
+
+
+Difficulties:
+- pre and post hooks can interfere with default/override, if they're called together with default/override, they can cause > to come back.
+*/
+
+#VAR no_loop 1;
+
+#var counters {
+  {move.pre} {0}
+  {move.post} {0}
+  {action.pre} {0}
+  {action.post} {0}
+  {cleanup.pre} {0}
+  {cleanup.post} {0}
+}
+
+/* Disable items while botting */
+mapoff
+prompt >$nl$
+
+/* Build Party Variable */
+#SEND !pwho
+
+/* Initialize Variables */
+#VAR found_mob 0
+#VAR mob_name {}
+#VAR found_player 0
+#VAR goldfound 0
+#VAR found_item 0
+#VAR bot 0
+#VAR singlestep 0
+#VAR stepping 0
+
+#SHOWME DEBUG: FOUNDPLAYER $found_player
+
+#ALIAS {.pause} {
+  #VAR stepping 0;
+  #ALIAS {_check_mob} {.pause};
+};
+
+#ALIAS {.stop} {
+  #MAP get {roomvnum} {bots[vnum]};
+  #PATH save forward bots[path];
+  #PATH save position bots[position];
+  #CLASS {bot_core} {save};
+  #CLASS {bot_core} {clear};
+  #ALIAS {.move.step} {#NOP};
+  #ALIAS {_check_mob} {#NOP};
+  #VAR stepping 0;
+  #VAR halt 1
+};
+
+#ALIAS {.resume} {
+  #MAP run $bots[vnum];
+  #PATH load $bots[path];
+  #PATH goto $bots[position];
+  #CLASS {bot_core} {load};
+  #VAR halt 0;
+  #DELAY {2} {.bot};
+};
+
+#ALIAS {.single} {
+  #VAR singlestep 1
+};
+
+/* Backwards compatibility aliases */
+#ALIAS {..} { .action };
+#ALIAS {_check_mob} { .action };
+
+#ACT { gold coins.$} {
+  #VAR goldfound 1
+};
+
+#ACT {^=A= } {
+  #VAR found_item 1
+};
+#ACT {^=W= } {
+  #VAR found_item 1
+};
+#ACT {^=I= } {
+  #VAR found_item 1
+};
+
+#ALIAS {killbot} {
+  .stop;
+  #CLASS bot kill;
+  #CLASS bot2 kill;
+  #CLASS bot_core kill;
+  #UNALIAS {.bot};
+  #VAR bot 0;
+  #VAR mob_name {};
+};
+
+#ALIAS {.bot} {
+  #IF {$halt == 0} {
+    #DELAY {0} {..};
+  };
+};
+
+#ALIAS {dogtank} {#ALIAS {kill} {#DELAY {2} {dog sicem %%0}}};
+#ALIAS {nodogtank} {#UNALIAS {kill}};
+
+#ACT {^=K=%1 dealt the killing blow to} {
+  corpsetrig;
+  #VAR mob_name {};
+  .cleanup;
+} {1};
+
+/* Detect Players */
+#ACT {^=P= %*} {
+  #VAR party_simple $party;
+  #LIST party_simple simplify;
+  #VAR party_found 0;
+  #FOREACH {$party_simple} {party_member} {
+    #REGEX {%0} {$party_member} {#VAR party_found 1};
+  };
+  #IF {!${party_found}} {
+    #VAR found_player 1
+  };
+} {6};
+
+#ALIAS {v %1} {#IF {"%1" == "on"} {#VAR vacuum 1} {#VAR vacuum 0}};
+
+#ACT {#PATH WALK: #END OF PATH} {
+  #SHOWME DEBUG: no_loop: $no_loop $$no_loop, found_mob: $found_mob $$found_mob;
+  #SHOWME DEBUG: $counters;
+  #IF {$no_loop} {#SHOWME no_loop true;} {#SHOWME no_loop false;};
+  #IF {$no_loop || !$found_mob} {#SHOWME no_loop || found_mob true;} {#SHOWME no_loop || found_mob false;};
+  #IF {$no_loop || !$found_mob} {
+    #SHOWME AREA FINISHED!;
+    killbot;
+    #IF {&{botcycle[]} > 1} {
+      nextarea
+    }; #ELSE {
+      #IF {!$no_home} {go home};
+    };
+  } {
+    #UNACT {^>$};
+    #PATH load botpath;
+    #VAR found_mob 0;
+    .bot
+  };
+};
+
+
+/* Coffin Auto-Donate */
+#VAR {coffinbot} {off};
+#ACT {^The coffin is full!} {
+  #IF {"$coffinbot" == "on"} {
+    .stop;
+    #DELAY {coffin_donate} {
+      go morgue;
+      donate coffin
+    } {1};
+    #DELAY {coffin_return} {
+      .resume
+    } {2};
+  };
+};
+
+
+#PATH load botpath;
+#VAR halt 0;
+
+#CLASS {bot2} {close};
+
+
+/*
+Stepper is split into 3 phases
+
+- Move
+- Action
+- Cleanup
+
+Each phase runs a pre hook, default or override hook, then a post hook. Hooks
+are present for stepper implementations to set.
+*/
+
+
+#CLASS {bot_core} {open};
+#ACT {=I= A %1 ore deposit.} {
+  #CLASS {bot_core} {assign} {
+    #VAR found_ore 1;
+    #VAR ore_type {%1};
+  };
+  #SHOWME FOUND ORE IN move.pre. found_ore: $found_ore $$found_ore --- ore_type $ore_type $$ore_type;
+} {1};
+
+#ALIAS .move.pre {
+  #CLASS {bot_core} {assign} {#VAR found_ore 0;};
+  #MATH {counters[move.pre]} {$counters[move.pre]+1};
+  #NOP;
+};
+
+#var DEBUG_COUNT 0;
+
+#ALIAS .move.default {
+  #MATH {DEBUG_COUNT} {$DEBUG_COUNT+1};
+  #SHOWME DEBUG: .move.default ----- .halt $halt --- found_item: $found_item --- vacuum: $vacuum;
+  #SHOWME DEBUG: DEBUG_COUNT $DEBUG_COUNT;
+  #IF {$DEBUG_COUNT == 5} {#NOP #VAR singlestep 1; #SHOWME STOPPING STEPPER ON DEBUG_COUNT 5;};
+  #NOP Disable deadman switch, if defined ;
+  #UNDELAY gohome;
+  #VAR bot 1;
+  #VAR halt 0;
+  #VAR found_mob 0;
+  #VAR stepping 1;
+  #VAR found_player 0;
+  #VAR goldfound 0;
+  #VAR found_item 0;
+  #VAR mob_name {};
+
+  #NOP move one step of botpath when room entrace (wrapped in =S=) is returned ;
+  #LINE ONESHOT {
+    #ACT {^=S=} {
+      #LINE ignore #SHOW {"DEBUG: .move.default ^=S= fired"};
+      #LINE ONESHOT {
+        #ACT {^>$} {
+          #SHOWME DEBUG: .move.default --- PROMPT --- found_item: $found_item -- found_player: $found_player --- vacuum: $vacuum;
+          #IF {$found_item && !$found_player && $vacuum} {
+            #SHOWME DEBUG: .move.default --- GETTING ALL!!;
+            #SEND !get all
+          };#ELSE {#SHOWME DEBUG: .move.default --- NOT GETTING ALL;};
+          #IF {$goldfound && !$found_player} {
+            #SEND !get coins
+          };
+          #IF {!$halt} {.action} {#LINE ignore #SHOW DEBUG: halt is 0;};
+        } {1};
+      };
+    } {1};
+  };
+
+  #PATH walk
+};
+#ALIAS .move.override-or-default {
+  #NOP move.override has to be a VAR, not an ALIAS, for this check to work. ;
+  #IF {&{.move.override}} {${.move.override}} {.move.default};
+};
+#ALIAS .move.post {
+  #MATH {counters[move.post]} {$counters[move.post]+1};
+  #NOP};
+
+#SHOWME setting found_ore to 0
+#CLASS {bot_core} {assign} {#VAR found_ore 0;};
+
+#ALIAS .action.pre {
+  #MATH {counters[action.pre]} {$counters[action.pre]+1};
+  #NOP;};
+#ALIAS .action.default {
+  #SHOWME DEBUG: .action.default ;
+  #LINE ONESHOT {
+    
+    #ACT {^>$} {
+      #IF {$found_player} {
+        .move
+      } {
+        .pause;
+        #IF {"$mob_name" != ""} {
+          kill $mob_name;
+          #VAR found_mob 1;
+        } {
+          .cleanup;
+        };
+      };
+    };
+  };
+};
+#ALIAS .action.override-or-default {
+  #NOP .action.override has to be a VAR, not an ALIAS, for this check to work. ;
+  #IF {&{.action.override}} {${.action.override}} {.action.default};
+};
+#ALIAS .action.post {
+  #MATH {counters[action.post]} {$counters[action.post]+1};
+  #NOP;};
+
+
+#ALIAS .cleanup.pre {
+  #MATH {counters[cleanup.pre]} {$counters[cleanup.pre]+1};
+  #NOP;};
+#ALIAS .cleanup.default {
+  #IF {$found_item && $vacuum} {
+    get all;
+  };
+  #IF {$goldfound} {
+    #SEND !get coins;
+  };
+
+  #LINE ONESHOT {
+    #ACT {^=S=} {
+      #SHOWME DEBUG: CLEANUP ACT =S=;
+      #IF {!$halt} {.next-step} {#SHOWME DEBUG: skipping .next-step, !halt is !$halt};
+    };
+  };
+  glance;
+};
+#ALIAS .cleanup.override-or-default {
+  #NOP .cleanup.override has to be a VAR, not an ALIAS, for this check to work. ;
+  #IF  {&{.cleanup.override}} {${.cleanup.override}} {.cleanup.default};
+};
+#ALIAS .cleanup.post {
+  #MATH {counters[cleanup.post]} {$counters[cleanup.post]+1};
+  #NOP;};
+
+
+#ALIAS .next-step {
+  #NOP set up next move;
+  #SHOWME DEBUG: .next-step --- CALLED;
+  #IF {!$singlestep} {
+    #SHOWME DEBUG: .next-step --- calling .move;
+    .move;
+  };#ELSE {#SHOWME DEBUG: .next-step --- NOT calling .move, singlestep;}
+};
+
+#ALIAS .move {
+  #LINE ignore #SHOW \nDEBUG: .move --- CALLED;
+  .move.pre;
+  .move.override-or-default;
+  .move.post;
+
+};
+
+#ALIAS .action {
+  #LINE ignore #SHOW \nDEBUG: .action --- CALLED;
+  .action.pre;
+  .action.override-or-default;
+  .action.post;
+  #NOP TODO: Replace below with a 1-off corpse/prompt trigger;
+  #NOP #IF {!$halt} {.cleanup} {#SHOWME DEBUG: skipping .cleanup, halt is 0};
+};
+
+#ALIAS .cleanup {
+  #LINE ignore #SHOW \nDEBUG: .cleanup --- CALLED;
+  .cleanup.pre;
+  .cleanup.override-or-default;
+  .cleanup.post;
+};
+
+#CLASS {bot_core} {close};
+
+/* send glance to start bot */
+glance;
