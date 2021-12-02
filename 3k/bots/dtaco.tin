@@ -8,7 +8,7 @@
 #act {Canislupus skips: a handful of diced tomatoes.} {get all;grab tomatoes}
 #act {You try to grab some tomatoes but they quiver like jello and slime away} {e;grab cheese}
 #act {Canislupus skips: a handful of grated cheese.} {get all;grab cheese}
-#act {You try to grab a handful of cheese, but it slips away from you.} {s;grab meat}
+#act {You try to grab a handful of cheese, but it slips away from you.} {#var row 2;s;grab meat}
 #act {Canislupus skips: a pile of ground meat.} {get all;grab meat}
 #act {You try to grab some meat, but it creeps away from your grasp!} {w;grab cream}
 #act {Canislupus skips: a glop of sour cream.} {get all;grab cream}
@@ -28,8 +28,14 @@
 #act {Pavlov takes: a packet of hot sauce.} {get all;grab sauce}
 
 
-#var weapon mace
+#var weapon rod
 #act {The melting cheese finally evaporates from %w.} {wield $weapon}
 #act {The guacamole coating %w finally oozes off.} {wear all}
+
+#var {row} {1}
+#act {You plummet, and SLAM into the ground!} {
+  #IF {$row == 1} {#2 w;door;#4 e};
+  #ELSEIF {$row == 2} {#2 w;door;#4 e;s;#4 w};
+}
 
 #class {bot} {close}
