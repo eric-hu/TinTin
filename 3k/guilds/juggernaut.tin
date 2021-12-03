@@ -200,8 +200,8 @@
 /* Aliases */
 #NOP No killtrig because I have ktrig!
 #alias corpsetrig {
-	wrap;
-	get coins;
+	wrap all;
+	divvy coins;
 	truck take all;
 }
 
