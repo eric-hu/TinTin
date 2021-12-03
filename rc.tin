@@ -9,7 +9,7 @@
 #CONFIG           {HISTORY SIZE}	{1000}
 #CONFIG           {LOG MODE}		{RAW}
 #CONFIG           {MOUSE}		{ON}
-#CONFIG           {PACKET PATCH}	{0.80}
+#CONFIG           {PACKET PATCH}	{1.2}
 #CONFIG           {REPEAT CHAR}		{!}
 #CONFIG           {REPEAT ENTER}	{ON}
 #CONFIG           {SCROLL LOCK}		{ON}
