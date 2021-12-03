@@ -1,14 +1,6 @@
 #class {inix} {open}
 
 /* Read in files */
-/*#NOP Inix specific script files
-#read .tt/api/8inix.tin
-#read .tt/api/adds.tin
-#read .tt/api/crypto.tin
-#read .tt/api/define.tin
-#read .tt/api/udefine.tin
-#read .tt/api/stocks.tin
-*/
 
 #NOP Additional Inix utility files
 #read .tt/3k/eternal.tin
@@ -22,8 +14,17 @@ rtick
 #read .tt/3k/guilds/juggernaut.tin
 /* Juggernaut variables */
 
-/* Light missile: Gnome suit */
-#var ammo_type 1
+/* Light missile: Gnome suit
+ 1)Srm Ammo                      200
+ 2)Srm Nitrogen Ammo             300
+ 3)Srm Biotech Ammo              400
+ 4)Srm Chemical Ammo             500
+ 6)Lrm Ammo                      100
+ 7)Lrm Nitrogen Ammo             110
+ 8)Lrm Biotech Ammo              120
+ 9)Lrm Chemical Ammo             140
+*/
+#var ammo_type 6
 
 /* Motivation specific scripts */
 
@@ -33,26 +34,41 @@ rtick
 #ALIAS prospectore {unstash2 50 %0 ore;#50 prospect;stash all}
 
 /* ROLM */
-/*  Upon the DragonBlade, the scroll rune glows brightly again. */
-#ACTION {Upon the %*, the scroll rune glows brightly again.} { update_chat %0; }
+#ACTION {Upon the %*, the scroll rune glows brightly again.} { update_chat %0;touch scroll rune; }
+#ACTION {You hear a divine chiming inside your head...} {
+  #LINE ONESHOT {#ACTION {{^[\s]\S.*}} {update_chat {HOPEFULLY LOGGED: %%1};#line log {rolm.txt} {%1}; } {9} }
+}
 
 /* Utility */
 #ALIAS redrawmobile {redraw chat off;redraw map off;redraw canvas off}
 #ALIAS redrawdesktop {redraw chat on;redraw map on;redraw canvas on}
 
-
 /* Ring of Thunderbolts */
 #VAR {tb_ring_count} {2}
-#ALIAS {tbring} {smur ring $tb_ring_count;remove ring;wear ring;#23 frotzz;smu ring;wear ring;}
+#ALIAS {tbring} {smur ring $tb_ring_count;remove ring;wear ring;#23 frotzz;remove ring;smu ring;wear ring;}
 
 /* Death Taco soda */
-
-#VAR {pop_count} {0}
+#VAR {pop_count} {1}
 #ALIAS {smpop} {smuggle remove pop $pop_count;drink pop;smuggle pop;}
 
 #MATH energy_well_cooldown {30*60+1};
 #ALIAS ewellloop {(energy well;#ticker {energy_well} {(energy well} {$energy_well_cooldown}};
 
 #ALIAS hmbloop {hmblast mind;#ticker {hmblast} {hmblast mind} {3601}}
+
+#ALIAS xcoreparty {
+  xcore;
+  #LINE ONESHOT {#ACTION {The missile whirrs as it accepts %*'s payload.} {#delay {1} {take core;launch $mobname}}};
+}
+
+#ALIAS xcoreloop {
+  xcoreparty;#TICKER {xcore} {xcoreparty} {801};
+}
+
+#ALIAS fryloop { (fry;#TICKER {fry} {(fry} {4501}; }
+
+
+/* Check party mates' dungeons: ask them to "dungeons clear all" if necessary */
+#alias rally {#send {rally %1};dungeons %1}
 
 #class {inix} {close}
