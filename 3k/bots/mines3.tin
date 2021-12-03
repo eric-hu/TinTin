@@ -1,6 +1,6 @@
 #class {bot} {open}
 
-#var {no_loop} {0}
+#var {no_loop} {1}
 #var {no_home} {0}
 #var {hardmode} {0}
 #var {vacuum} {1}
@@ -37,8 +37,15 @@
   w;spelunk;
   ne;spelunk;
   w;spelunk;
+  e;
 }
 
+/* FIXME:
+- if ore is present, spelunk will send and trigger "has already been searched" which triggers moving on
+  - not sure why the ore is skipped in the first place
+  - iron ore is deliberately skipped now since my clvl is too high to benefit
+
+*/
 
 /* .. is equivalent to
  0. set halt to 0
@@ -47,10 +54,13 @@
  3. check for mob to fight
  4. check for items and coins, take if present (and vacuum set to 1)
 */
+
+/* clvl 10-20 */
 #act {You have found a deposit of iron ore!} { 
-  #var halt 1;
-  mine;
+  ..
  }
+
+/* clvl 15-25 */
 #act {You have found a deposit of steel ore!} {
   #var halt 1;
   mine;
@@ -61,28 +71,12 @@
 #act {You have exhausted the supply of iron ore.} { .. }
 #act {You have exhausted the supply of steel ore.} { .. }
 
-#act { You have disturbed} {
+#act {You have disturbed} {
   #var halt 1;
 }
 #act {You should try to mine this instead.} {
   #var halt 1;
   mine;
-}
-
-#act {^=M= {Queen's Elite Guardswoman|Black Patrol Guard|Black Patrol Leader|Wild Stag|Faerie Lizard|Baby Dragon|Rabid Wolf|Ragged Peasant|Sylvan Elf|Wyvern}} {
-	#switch {"%1"} {
-		#case {"Queen's Elite Guardswoman"}	{#var mobname guard};
-		#case {"Black Patrol Guard"}		{#var mobname guard};
-		#case {"Black Patrol Leader"}		{#var mobname guard};
-		#case {"Wild Stag"}			{#var mobname stag};
-		#case {"Faerie Lizard"}			{#var mobname lizard};
-		#case {"Baby Dragon"}			{#var mobname dragon};
-		#case {"Rabid Wolf"}			{#var mobname wolf};
-		#case {"Ragged Peasant"}		{#var mobname peasant};
-		#case {"Sylvan Elf"}			{#var mobname elf};
-		#case {"Wyvern"}			{#var mobname wyvern};
-	};
-	#if {($hardmode == 1 && "$mobname" == "guard") ^^ ("$mobname" != "guard")} {_check_mob}
 }
 
 #class {bot} {close}
