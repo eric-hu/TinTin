@@ -1,2 +1,4 @@
 .pass
 logs/*.log
+logs/3k.chat
+logs/3k-priority.chat
