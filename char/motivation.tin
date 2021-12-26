@@ -43,7 +43,7 @@
 #ALIAS redrawdesktop {redraw chat on;redraw map on;redraw canvas on}
 
 /* Ring of Thunderbolts */
-#VAR {tb_ring_count} {2}
+#VAR {tb_ring_count} {1}
 #ALIAS {tbring} {smur ring $tb_ring_count;remove ring;wear ring;#23 frotzz;remove ring;smu ring;wear ring;}
 
 /* Death Taco soda */
