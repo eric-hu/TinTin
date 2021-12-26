@@ -655,6 +655,9 @@
 	#REGEX {%0} {~%w~takes a deep breath and prepares to perform a song for %w.} {#var mipgag 1};
 	#REGEX {%0} {~%w~sings soulfully} {#var mipgag 1};
 
+	#NOP Bladesingers;
+	#REGEX {%0} {~%w~mutters an elvish phrase and you watch as shadows form around him.} {#var mipgag 1};
+
 	#NOP Breed;
 	#REGEX {%0} {looks visibly weaker!} {#var mipgag 1};
 	#REGEX {%0} {looks more vulnerable!} {#var mipgag 1};
@@ -963,7 +966,7 @@
 			#case {"Party"}			{
 				#var {commcol} {<128>};
 				#line log {.tt/logs/3k-priority.chat} {$timestamp\};
-				#line log {.tt/logs/3k-priority.chat} {$mip[comm][cdata]};
+				#line log {.tt/logs/3k-priority.chat} {$mip[comm][data]};
 			};
 			#case {"Poll"}			{#var {commcol} {<178>}};
 			#case {"Professions"}		{#var {commcol} {<178>}};
