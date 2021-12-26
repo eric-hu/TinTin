@@ -39,6 +39,8 @@ rtick
   #LINE ONESHOT {#ACTION {{^[\s]\S.*}} {update_chat {HOPEFULLY LOGGED: %%1};#line log {rolm.txt} {%1}; } {9} }
 }
 
+#ACTION {Upon the %*, the owl rune glows brightly again.} { update_chat %0; }
+
 /* Utility */
 #ALIAS redrawmobile {redraw chat off;redraw map off;redraw canvas off}
 #ALIAS redrawdesktop {redraw chat on;redraw map on;redraw canvas on}
@@ -67,8 +69,14 @@ rtick
 
 #ALIAS fryloop { (fry;#TICKER {fry} {(fry} {4501}; }
 
+#ALIAS owlloop { touch owl rune;#TICKER {owl} {touch owl rune} {3602}}
+
+#alias blueloop {tgm blue capsule;eat blue capsule;#TICKER blue {tgm blue capsule;eat blue capsule} {900}}
 
 /* Check party mates' dungeons: ask them to "dungeons clear all" if necessary */
 #alias rally {#send {rally %1};dungeons %1}
+
+/* Bot sequences */
+#ALIAS bamoney {ba whorehouse;ba anchorman;}
 
 #class {inix} {close}
