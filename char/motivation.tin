@@ -40,7 +40,8 @@
 
 /* Utility */
 #ALIAS redrawmobile {redraw chat off;redraw map off;redraw canvas off}
-#ALIAS redrawdesktop {redraw chat on;redraw map on;redraw canvas on}
+#ALIAS redrawdesktop {#var chat[rows] 18;#var chat[height] 19;#var map[height] 18;redraw chat on;redraw map on;redraw canvas on}
+#ALIAS redrawlaptop {#var chat[rows] 10;#var chat[height] 11;#var map[height] 10;redraw chat on;redraw map on;redraw canvas on}
 
 /* Ring of Thunderbolts */
 #VAR {tb_ring_count} {1}
