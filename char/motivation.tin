@@ -74,7 +74,18 @@
 /* Check party mates' dungeons: ask them to "dungeons clear all" if necessary */
 #alias rally {#send {rally %1};dungeons %1}
 
+#ALIAS swapsally {tgam;go isac;swap;#delay 3 {empower};#delay 6 {calltruck;en 85;gatt;reflex add sp <5% airdrop}};
+#ALIAS swapgnome {tgam;go isac;swap;#delay 3 {empower};#delay 6 {calltruck;en 145;gatt;reflex remove sp <5%}};
+
+#ALIAS supportdef {support reset;#314 support upgrade armor}
+#ALIAS supportoff {support reset;#99 support upgrade powerplant;#215 support upgrade mount}
+
 /* Bot sequences */
 #ALIAS bamoney {ba whorehouse;ba anchorman;}
+
+#ALIAS counterpoiseintwis {counterpoise 10 from int to wis}
+#ALIAS counterpoiseloop {counterpoiseintwis;#ti counterpoise {counterpoiseintwis} {3*60*60+2}}
+
+redrawlaptop
 
 #class {inix} {close}
