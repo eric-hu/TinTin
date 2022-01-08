@@ -88,4 +88,7 @@
 
 redrawlaptop
 
+/* Override quicken ticker since Motivation has a longer CD */
+#ti quicken {(quicken} {202}
+
 #class {inix} {close}
