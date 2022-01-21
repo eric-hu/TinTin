@@ -1,0 +1,20 @@
+#class {communism} {open}
+
+/* Read in files */
+#NOP Primary Guild File
+#read .tt/3k/guilds/elemental.tin
+
+#NOP Damage highlight and stats
+#read .tt/3k/damage.tin
+
+#NOP Gags
+#gag {^You delete }
+
+/* Utility */
+#ALIAS redrawmobile {redraw chat off;redraw map off;redraw canvas off}
+#ALIAS redrawdesktop {#var chat[rows] 18;#var chat[height] 19;#var map[height] 18;redraw chat on;redraw map on;redraw canvas on}
+#ALIAS redrawlaptop {#var chat[rows] 10;#var chat[height] 11;#var map[height] 10;redraw chat on;redraw map on;redraw canvas on}
+
+redrawlaptop
+
+#class {communism} {close}
