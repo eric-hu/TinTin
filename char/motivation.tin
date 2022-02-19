@@ -145,4 +145,101 @@ redrawlaptop
 /* Override quicken ticker since Motivation has a longer CD */
 #ti quicken {(quicken} {202}
 
+#func {curr_mob_hp} {#return $mip[FFF][L][data]}
+#func {in_combat} {#math {result} {$mip[round]!=0}}
+
+#ALIAS darknessloop {
+  #VAR {ring_removed} {0};
+  #TICKER ring {
+    #if {@curr_mob_hp{} < 5 && ! $ring_removed} {
+      remove ring;
+      smuggle ring;
+      #VAR {ring_removed} {1};
+      #UNTICKER ring
+    } {
+      #SHOWME ===== @curr_mob_hp{} above %
+    }
+  } {2};
+  #ACTION {You attack} {darknessloop} {4};
+  smuggle remove ring;
+  wear ring;
+}
+
+#ALIAS darknessloopoff {#UNTICKER ring;#UNACTION {You attack}}
+
+
+/* Knights tour */
+#var knight_solution {
+  {1} {{x} {6} {y} {1}}
+  {2} {{x} {4} {y} {2}}
+  {3} {{x} {2} {y} {1}}
+  {4} {{x} {3} {y} {3}}
+  {5} {{x} {1} {y} {2}}
+  {6} {{x} {3} {y} {1}}
+  {7} {{x} {5} {y} {2}}
+  {8} {{x} {6} {y} {4}}
+  {9} {{x} {4} {y} {5}}
+  {10} {{x} {6} {y} {6}}
+
+  {11} {{x} {5} {y} {4}}
+  {12} {{x} {6} {y} {2}}
+  {13} {{x} {4} {y} {3}}
+  {14} {{x} {5} {y} {1}}
+  {15} {{x} {6} {y} {3}}
+  {16} {{x} {5} {y} {5}}
+  {17} {{x} {3} {y} {6}}
+  {18} {{x} {2} {y} {4}}
+  {19} {{x} {1} {y} {6}}
+  {20} {{x} {3} {y} {5}}
+
+  {21} {{x} {5} {y} {6}}
+  {22} {{x} {4} {y} {4}}
+  {23} {{x} {6} {y} {5}}
+  {24} {{x} {4} {y} {6}}
+  {25} {{x} {2} {y} {5}}
+  {26} {{x} {1} {y} {3}}
+  {27} {{x} {3} {y} {2}}
+  {28} {{x} {1} {y} {1}}
+  {29} {{x} {2} {y} {3}}
+  {30} {{x} {1} {y} {5}}
+
+  {31} {{x} {3} {y} {4}}
+  {32} {{x} {2} {y} {6}}
+  {33} {{x} {1} {y} {4}}
+  {34} {{x} {2} {y} {2}}
+  {35} {{x} {4} {y} {1}}
+  {36} {{x} {5} {y} {3}}
+}
+
+#function knight_solve {
+  #local index;
+  #list knight_solution size {list_size};
+
+  #NOP find current starting index;
+  #loop {1} {$list_size} {index} {
+    #showme $index;
+
+    #if { $knight_solution[$index][x] == %1 &&
+         $knight_solution[$index][y] == %2
+        } {
+          #showme match! index: $index;
+          #break;
+        };
+  };
+
+  #local offset;
+  #local next_move;
+  #loop {0} {$list_size-1} {offset} {
+    #math {next_move} {($index + $offset) % $list_size + 1 };
+    #SHOWME NEXT MOVE INDEX: $next_move;
+    #NOP skip the case when next_move is 0, arrays are not 0-indexed;
+    #if {$next_move == 0} {#showme !!!!!         !!!!  continuing!!;#continue};
+
+    #showme next_move: $knight_solution[$next_move][x] $knight_solution[$next_move][y];
+    #send {ride $knight_solution[$next_move][x] $knight_solution[$next_move][y]};
+  };
+}
+
+#alias knight_axe {mission ask;mission accept;d;s;e;#3 {play;start;#5 throw axe;};w;n;u;}
+#alias knight_axe2 {mission ask;mission accept;d;s;e;#15 {play;start;#5 throw axe;};w;n;u;}
 #class {inix} {close}
