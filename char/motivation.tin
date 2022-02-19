@@ -51,8 +51,56 @@
 #VAR {pop_count} {1}
 #ALIAS {smpop} {smuggle remove pop $pop_count;drink pop;smuggle pop;}
 
-#MATH energy_well_cooldown {30*60+1};
-#ALIAS ewellloop {(energy well;#ticker {energy_well} {(energy well} {$energy_well_cooldown}};
+/* ewell / Energy well */
+#MATH energy_well_cooldown {30*60+3};
+#ALIAS ewellloop {queue_ewell};
+#ALIAS ewelloop {ewellloop}
+#ALIAS ewelloff {#UNTICKER ewell}
+
+#VAR next_ewell_reserved 0;
+#ACTION {[PARTY] Skykleaver: [EWELL] %* reset- i'll ewell next time i see mob > 95%} {
+  #VAR next_ewell_reserved 1;
+  #DELAY ewell_reserve_reset {
+    #SHOWME DEBUG: ewell reservation reset (timer)!;
+    #VAR next_ewell_reserved 0;
+  } {60*3}
+}
+
+#VAR ewell_has_been_announced 0;
+#ALIAS ewell_announce {
+  #IF { !$ewell_has_been_announced } {
+    ptell [EWELL] energy well ready. I will ewell next mob > 85%.;
+    #var {ewell_has_been_announced} {1};
+  }
+}
+
+#ALIAS ewell_next_available_mob {
+  #IF { $next_ewell_reserved } {
+    #SHOWME ===== DEBUG ewell_next_available_mob: if-true;
+    #DELAY {ewell} {ewell_next_available_mob} {15};
+  } {
+    #SHOWME ===== DEBUG ewell_next_available_mob: if-false;
+    ewell_announce;
+
+    #DELAY {ewell} {queue_ewell} {15};
+  }
+}
+
+#ALIAS queue_ewell {
+  #IF { $ewell_has_been_announced } {
+    #IF { @in_combat{} && @curr_mob_hp{} < 85 } {
+      #SHOWME ===== ewell deferred: mob too low or not in combat;
+      #DELAY ewell {queue_ewell} {10};
+    } {
+      (energy well;
+      #VAR ewell_has_been_announced 0;
+      #VAR next_ewell_reserved 0;
+      #DELAY ewell {queue_ewell} {$energy_well_cooldown};
+    };
+  } {
+    ewell_next_available_mob;
+  };
+}
 
 #ALIAS hmbloop {hmblast mind;#ticker {hmblast} {hmblast mind} {3601}}
 
