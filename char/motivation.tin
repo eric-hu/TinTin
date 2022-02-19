@@ -104,6 +104,7 @@
 
 #ALIAS hmbloop {hmblast mind;#ticker {hmblast} {hmblast mind} {3601}}
 
+/* xcore / Expose Core */
 #ALIAS xcoreparty {
   xcore;
   #LINE ONESHOT {#ACTION {The missile whirrs as it accepts %*'s payload.} {#delay {1} {take core;launch $mobname}}};
@@ -113,6 +114,8 @@
   xcoreparty;#TICKER {xcore} {xcoreparty} {801};
 }
 
+#ACTION {CORE BREACH IMMINENT} {reproduce motivation;take core;launch motivation;#unti xcore}
+
 #ALIAS fryloop { (fry;#TICKER {fry} {(fry} {4501}; }
 
 #ALIAS owlloop { touch owl rune;#TICKER {owl} {touch owl rune} {3602}}
@@ -120,7 +123,10 @@
 #alias blueloop {tgm blue capsule;eat blue capsule;#TICKER blue {tgm blue capsule;eat blue capsule} {900}}
 
 /* Check party mates' dungeons: ask them to "dungeons clear all" if necessary */
-#alias rally {#send {rally %1};dungeons %1}
+#ALIAS rally {#send {rally %1};dungeons %1}
+
+#NOP Player specific rallies. Use priority 4 to override "rally"
+#ALIAS {rally skykleaver} {#send {rally skykleaver};dungeons skykleaver;pa wolf} {4}
 
 #ALIAS swapsally {tgam;go isac;swap;#delay 3 {empower};#delay 6 {calltruck;en 85;gatt;reflex add sp <5% airdrop}};
 #ALIAS swapgnome {tgam;go isac;swap;#delay 3 {empower};#delay 6 {calltruck;en 145;gatt;reflex remove sp <5%}};
