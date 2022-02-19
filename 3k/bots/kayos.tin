@@ -48,6 +48,8 @@
 	}
 }
 
+#act {Sight returns to your eyes, darkness becomes light again.} { glance }
+
 #NOP Cycle main area/bunkers/ship
 #var bunker_path {enter;n;w;e;e;n;{grab cell;s};w;s;out}
 #var ship_path {teleport;e;e;e;e}
