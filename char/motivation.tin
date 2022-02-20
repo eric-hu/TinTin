@@ -229,7 +229,7 @@ redrawlaptop
 
   #local offset;
   #local next_move;
-  #loop {0} {$list_size-1} {offset} {
+  #loop {0} {$list_size-2} {offset} {
     #math {next_move} {($index + $offset) % $list_size + 1 };
     #SHOWME NEXT MOVE INDEX: $next_move;
     #NOP skip the case when next_move is 0, arrays are not 0-indexed;
@@ -240,6 +240,110 @@ redrawlaptop
   };
 }
 
-#alias knight_axe {mission ask;mission accept;d;s;e;#3 {play;start;#5 throw axe;};w;n;u;}
-#alias knight_axe2 {mission ask;mission accept;d;s;e;#15 {play;start;#5 throw axe;};w;n;u;}
+#alias knight_axe {mission ask;mission accept;d;s;e;#3 {play;start;#5 throw axe;};w;n;u;mission return}
+#alias knight_axe2 {mission ask;mission accept;d;s;e;#15 {play;start;#5 throw axe;};w;n;u;mission return}
+
+/* Knights tour */
+#var knight_solution2 {
+  {1}  {{x} {6} {y} {1}}
+  {2}  {{x} {8} {y} {2}}
+  {3}  {{x} {7} {y} {4}}
+  {4}  {{x} {8} {y} {6}}
+  {5}  {{x} {7} {y} {8}}
+  {6}  {{x} {5} {y} {7}}
+  {7}  {{x} {6} {y} {5}}
+  {8}  {{x} {4} {y} {6}}
+  {9}  {{x} {3} {y} {8}}
+  {10} {{x} {1} {y} {7}}
+
+  {11} {{x} {2} {y} {5}}
+  {12} {{x} {1} {y} {3}}
+  {13} {{x} {2} {y} {1}}
+  {14} {{x} {4} {y} {2}}
+  {15} {{x} {3} {y} {4}}
+  {16} {{x} {2} {y} {6}}
+  {17} {{x} {1} {y} {8}}
+  {18} {{x} {3} {y} {7}}
+  {19} {{x} {4} {y} {5}}
+  {20} {{x} {6} {y} {6}}
+
+  {21} {{x} {5} {y} {8}}
+  {22} {{x} {7} {y} {7}}
+  {23} {{x} {8} {y} {5}}
+  {24} {{x} {7} {y} {3}}
+  {25} {{x} {8} {y} {1}}
+  {26} {{x} {6} {y} {2}}
+  {27} {{x} {5} {y} {4}}
+  {28} {{x} {3} {y} {3}}
+  {29} {{x} {4} {y} {1}}
+  {30} {{x} {2} {y} {2}}
+
+  {31} {{x} {1} {y} {4}}
+  {32} {{x} {3} {y} {5}}
+  {33} {{x} {1} {y} {6}}
+  {34} {{x} {2} {y} {8}}
+  {35} {{x} {4} {y} {7}}
+  {36} {{x} {6} {y} {8}}
+  {37} {{x} {8} {y} {7}}
+  {38} {{x} {7} {y} {5}}
+  {39} {{x} {5} {y} {6}}
+  {40} {{x} {6} {y} {4}}
+
+  {41} {{x} {8} {y} {3}}
+  {42} {{x} {7} {y} {1}}
+  {43} {{x} {5} {y} {2}}
+  {44} {{x} {3} {y} {1}}
+  {45} {{x} {1} {y} {2}}
+  {46} {{x} {2} {y} {4}}
+  {47} {{x} {4} {y} {3}}
+  {48} {{x} {5} {y} {1}}
+  {49} {{x} {7} {y} {2}}
+  {50} {{x} {8} {y} {4}}
+
+  {51} {{x} {6} {y} {3}}
+  {52} {{x} {5} {y} {5}}
+  {53} {{x} {7} {y} {6}}
+  {54} {{x} {8} {y} {8}}
+  {55} {{x} {6} {y} {7}}
+  {56} {{x} {4} {y} {8}}
+  {57} {{x} {2} {y} {7}}
+  {58} {{x} {1} {y} {5}}
+  {59} {{x} {3} {y} {6}}
+  {60} {{x} {4} {y} {4}}
+
+  {61} {{x} {2} {y} {3}}
+  {62} {{x} {1} {y} {1}}
+  {63} {{x} {3} {y} {2}}
+  {64} {{x} {5} {y} {3}}
+}
+
+#function knight_solve_adv {
+  #local index;
+  #list knight_solution2 size {list_size};
+
+  #NOP find current starting index;
+  #loop {1} {$list_size} {index} {
+    #showme $index;
+
+    #if { $knight_solution2[$index][x] == %1 &&
+         $knight_solution2[$index][y] == %2
+        } {
+          #showme match! index: $index;
+          #break;
+        };
+  };
+
+  #local offset;
+  #local next_move;
+  #loop {0} {$list_size-2} {offset} {
+    #math {next_move} {($index + $offset) % $list_size + 1 };
+    #SHOWME NEXT MOVE INDEX: $next_move;
+    #NOP skip the case when next_move is 0, arrays are not 0-indexed;
+    #if {$next_move == 0} {#showme !!!!!         !!!!  continuing!!;#continue};
+
+    #showme next_move: $knight_solution2[$next_move][x] $knight_solution2[$next_move][y];
+    #send {ride $knight_solution2[$next_move][x] $knight_solution2[$next_move][y]};
+  };
+}
+
 #class {inix} {close}
