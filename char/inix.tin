@@ -10,14 +10,16 @@
 #read .tt/api/stocks.tin
 
 #NOP Additional Inix utility files
+#read .tt/3k/damage.tin
 #read .tt/3k/eternal.tin
 #read .tt/3k/fodoor.tin
 #read .tt/3k/puppy.tin
 #read .tt/3k/reforger.tin
 #read .tt/3k/rtick.tin
+#read .tt/3k/terrain.tin
 rtick
 
-#NOP Primary Guile File
+#NOP Primary Guild File
 #read .tt/3k/guilds/juggernaut.tin
 
 #NOP Numbers Highlight
